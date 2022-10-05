@@ -3,7 +3,7 @@
 
 ## Overview
 
-GOATs help structure information sematically by taking an ontological rather than a taxonomical approach. 
+[GOATs](https://github.com/mojolab/mojogoat)  help structure information sematically by taking an ontological rather than a taxonomical approach. 
 In this implementation of the GOAT, we use a "quad" as the semantic structure: `<source><story><target><date>`
 
 A set of quads can be represented as a table, a CSV, a plain delimited text, or a more complex data structure
