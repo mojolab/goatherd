@@ -17,7 +17,10 @@ The GOAT takes a set of quads and sets up a way to feed it into a neo4j graph da
 3. When a GOAT gets too fat, make biryani
 
 
+
 ## Docker Start Command
+
+[GOATPen Docker Image](https://hub.docker.com/r/arjunvenkatraman/goatpen)
 
 ```
 docker run  -it -p 8888:8888 -p 5001:5001  --mount type=bind,source=$pwd/xpal-data,target=/opt/xpal-data arjunvenkatraman/goatpen:latest
