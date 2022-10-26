@@ -6,9 +6,11 @@ import os,datetime
 from py2neo import Graph
 from py2neo.ogm import Repository, Model, Property, RelatedTo, Label
 from py2neo.matching import *
-import re
+import re,json
 
 #Import pyxlrd
+
+#Read configs from file in path "goatconfigs"
 
 
 # GOAT Definitions
@@ -21,13 +23,10 @@ def get_rels_from_file(relfile):
         relationships=[{"source":rel.split("|")[0],"story":rel.split("|")[1],"target":rel.split("|")[2],"date":"29-May-2022"} for rel in rels]
     return relationships
 # function to get a mojogoat configuration for a specific dbname
-def get_mgc(dbname="neo4j"):
-    goatconfig = {
-        'username': 'neo4j',
-        'password': 'theansweris42',
-        'dbname': dbname,
-        'dburl': 'host.docker.internal:11003'
-    }
+def get_mgc(dbname="neo4j", goatconfigpath="/opt/xpal-data/goatconfigs/neo4jgoatconfig.json"):
+    with open(goatconfigpath) as f:
+        goatconfig=json.loads(f.read())
+    goatconfig['dbname']=dbname
     return goatconfig
 
 # function to generate a nodeid
@@ -125,6 +124,8 @@ class Artefact(Node):
             "summary": self.summary,
             "url": self.url
         }
+
+
 
 
 # Define a class for a MojoGOAT
@@ -254,11 +255,10 @@ class Neo4jGoat:
 
 # Feeding the GOAT
 
-
-
 # Google Sheets Functions
 
 # function to get a list of dicts with sheetnames and dataframes from a google sheet
+'''
 def get_sheet_download(gd,url):
     iodws=gd.open_by_url(url)
     wslist=iodws.worksheets()
@@ -268,3 +268,4 @@ def get_sheet_download(gd,url):
         df=ws.get_as_df()
         dflist.append({"dfname":dfname,"df":df})
     return dflist
+'''
