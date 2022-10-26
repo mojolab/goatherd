@@ -185,31 +185,6 @@ class Neo4jGoat:
         output=x.linkedto.add(y, properties={"story":newstory,"adddate":adddate,"updatedate":datetime.datetime.now()})
         return output
 
-    # function to add all relationships from a dataframe pulled from a table containing triples
-    def add_sheet_relationships(self,df):
-        for triple in df.to_dict(orient="records"):
-            print(triple['source'],triple['story'],triple['target'])
-            try:
-                source=self.add_node(nodeid=get_nodeid(triple['source']),name=triple['source'])
-                target=self.add_node(nodeid=get_nodeid(triple['target']),name=triple['target'])
-                output=self.link(source,target,triple['story'],triple['date'])
-                print("Result of linkage: ",output)
-                self.repo.save(source)
-            except Exception as e:
-                print(str(e))
-    def import_relfile(self,relfile):
-        relationships=get_rels_from_file(relfile)
-        for triple in relationships:
-            print(triple['source'],triple['story'],triple['target'])
-            try:
-                source=self.add_node(nodeid=get_nodeid(triple['source']))
-                target=self.add_node(nodeid=get_nodeid(triple['target']))
-                output=self.link(source,target,triple['story'],triple['date'])
-                print("Result of linkage: ",output)
-                self.repo.save(source)
-            except Exception as e:
-                print(str(e))
-
     # function to link nodes with relationship storyline "is"
     def link_is(self,node1,node2):
         node1.isthesameas.add(node2)
@@ -224,18 +199,20 @@ class Neo4jGoat:
         self.repo.save(a)
         return a
 
+    def eat_goat_nodes(self,goat):
+        for node in goat.all_nodes():
+            self.add_node(**node)
+            self.update_labels(node['nodeid'],node['labels'])
     
-            
+    def eat_goat_rels(self,goat):
+        for rel in goat.all_rels():
+            source=self.add_node(nodeid=rel['source'])
+            target=self.add_node(nodeid=rel['target'])
+            self.link(source,target,rel['story'],rel['date'])
+            self.repo.save(source)
 
     # Functions to get poop and milk out of the GOAT
 
-    # loop through all person nodes in repo and get properties as a dict
-    def dump_person_records(self):
-        recs=[]
-        for person in self.repo.match(Person):
-            props=get_person_properties(person)
-            recs.append(props)
-        return recs
 
     # function to dump all relationships to a file
     def dump_all_rels(self,path="/opt/xpal-data/mojogoat"):
@@ -253,19 +230,3 @@ class Neo4jGoat:
             f.write(rellines)
 
 
-# Feeding the GOAT
-
-# Google Sheets Functions
-
-# function to get a list of dicts with sheetnames and dataframes from a google sheet
-'''
-def get_sheet_download(gd,url):
-    iodws=gd.open_by_url(url)
-    wslist=iodws.worksheets()
-    dflist=[]
-    for ws in wslist:
-        dfname=ws.title
-        df=ws.get_as_df()
-        dflist.append({"dfname":dfname,"df":df})
-    return dflist
-'''
