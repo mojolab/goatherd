@@ -126,8 +126,6 @@ class Artefact(Node):
         }
 
 
-
-
 # Define a class for a MojoGOAT
 class Neo4jGoat:
     def __init__(self,goatconfig):
