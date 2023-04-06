@@ -64,7 +64,7 @@ class Node(Model):
             self.nodeid, self.name
         )
 
-
+# These classes are only relevant for having more properties in the Neo4J daabase itself. Not strictly relevant methinks: Arjun 2023-04-06
 # define a class to store Person records with properties nodeid, name, linkedto, urls
 class Person(Node):
     __primarykey__="nodeid"
@@ -190,6 +190,8 @@ class Neo4jGoat:
         self.repo.save(node1)
         self.repo.save(node2)
 
+    '''
+    Obsolete functions
     # function to add an artefact 
     def add_artefact(self,node, url=None, summary=None, atype=None):
         nodeid=get_nodeid(node)
@@ -210,7 +212,7 @@ class Neo4jGoat:
             self.repo.save(source)
 
     # Functions to get poop and milk out of the GOAT
-
+    '''
 
     # function to dump all relationships to a file
     def dump_all_rels(self,path="/opt/xpal-data/mojogoat"):
