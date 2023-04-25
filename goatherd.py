@@ -155,6 +155,12 @@ class Neo4jGoat:
         self.repo.save(p)
         return p
     
+    def get_node_dict(self,nodeid):
+        node=self.repo.match(Node,nodeid).first().get_properties()
+        nodelabels=self.nodes.match("Node",nodeid=nodeid).first().labels
+        node['labels']=list(nodelabels)
+        return node
+        
     # function to update the labels of a node
     def update_labels(self,nodeid,labels):
         thisnode=self.nodes.match("Node",nodeid=nodeid).first()
