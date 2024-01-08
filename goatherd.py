@@ -9,10 +9,7 @@ from py2neo.matching import *
 import re,json
 
 #Import pyxlrd
-
 #Read configs from file in path "goatconfigs"
-
-
 # GOAT Definitions
 def get_rels_from_file(relfile):
     adddate=relfile.split("/")[-1].replace("relationships-","")
