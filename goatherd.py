@@ -24,6 +24,11 @@ def get_mgc(dbname="neo4j", goatconfigpath="/xpal-data/goatconfigs/neo4jgoatconf
     with open(goatconfigpath) as f:
         goatconfig=json.loads(f.read())
     goatconfig['dbname']=dbname
+
+
+
+
+    
     return goatconfig
 
 # function to generate a nodeid
