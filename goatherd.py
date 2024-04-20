@@ -8,6 +8,14 @@ from py2neo.ogm import Repository, Model, Property, RelatedTo, Label
 from py2neo.matching import *
 import re,json
 
+labels=[
+    "Node",
+    "Person",
+    "Organization",
+    "Artefact",
+    "Project",
+    "Program"
+]
 #Import pyxlrd
 #Read configs from file in path "goatconfigs"
 # GOAT Definitions
@@ -21,15 +29,30 @@ def get_rels_from_file(relfile):
     return relationships
 # function to get a mojogoat configuration for a specific dbname
 def get_mgc(dbname="neo4j", goatconfigpath="/xpal-data/goatconfigs/neo4jgoatconfig.json"):
-    with open(goatconfigpath) as f:
-        goatconfig=json.loads(f.read())
-    goatconfig['dbname']=dbname
+    try:
+        with open(goatconfigpath) as f:
+            goatconfig=json.loads(f.read())
+        goatconfig['dbname']=dbname
+        return goatconfig
+    except Exception as e:
+        print(str(e))
+        return None
 
+def update_keystones(goat, labels=labels):
+    k1=goat.add_node(nodeid="__keystone1")
+    k2=goat.add_node(nodeid="__keystone2")
+    goat.update_labels("__keystone1",labels)
+    goat.update_labels("__keystone2",labels)
 
-
+    k1.isthesameas.add(k2)
+    k1.linkedto.add(k2)
+    k2.isthesameas.add(k1)
+    k2.linkedto.add(k1)
+    goat.repo.save(k2)
+    goat.repo.save(k1)
 
     
-    return goatconfig
+    
 
 # function to generate a nodeid
 def get_nodeid(node):
@@ -46,6 +69,7 @@ class Node(Model):
     linkedto=RelatedTo("Node")
     isthesameas=RelatedTo("Node")
     nodetype = Property()
+    url=Property()
 
     def get_properties(self):
         return {
@@ -183,13 +207,26 @@ class Neo4jGoat:
 
     #function to create and add lines to a relationship -- TODO: add a way to include timestamps for relationship updates
     def link(self,x,y,storyline,adddate):
-        curstory=self.get_story(x,y)
-        newstory=[storyline]
-        print(newstory)
-        if curstory is not None:
-            newstory=list(set(newstory+curstory))
-        output=x.linkedto.add(y, properties={"story":newstory,"adddate":adddate,"updatedate":datetime.datetime.now()})
-        return output
+        try:
+            curstory=self.get_story(x,y)
+            newstory=[storyline]
+            print(newstory)
+            if curstory is not None:
+                newstory=list(set(newstory+curstory))
+            output=x.linkedto.add(y, properties={"story":newstory,"adddate":adddate,"updatedate":datetime.datetime.now()})
+            self.repo.save(x)
+            return output
+        except Exception as e:
+            print(str(e))
+            return None
+    
+    def link_nodes(self, x_nodeid, y_nodeid, story, adddate):
+        x = self.repo.match(Node, x_nodeid).first()
+        y = self.repo.match(Node, y_nodeid).first()
+        print(x.nodeid, y.nodeid)
+        if x is None or y is None:
+            return None
+        return self.link(x, y, story, adddate)
 
     # function to link nodes with relationship storyline "is"
     def link_is(self,node1,node2):
