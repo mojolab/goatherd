@@ -160,7 +160,6 @@ class Neo4jGoat:
         self.nodes=NodeMatcher(self.graph)
         self.dbname=goatconfig['dbname']
 
-    # Self Reporting
 
     #function to get the graph composition
     def get_compostion(self):
