@@ -28,7 +28,7 @@ def get_rels_from_file(relfile):
         relationships=[{"source":rel.split("|")[0],"story":rel.split("|")[1],"target":rel.split("|")[2],"date":"29-May-2022"} for rel in rels]
     return relationships
 # function to get a mojogoat configuration for a specific dbname
-def get_mgc(dbname="neo4j", goatconfigpath="/xpal-data/goatconfigs/neo4jgoatconfig.json"):
+def get_mgc(dbname="neo4j", goatconfigpath="/xpal-data/goatconfigs/neo4jgoatconfig-ananda.json"): #TODO: Allow connections to multiple goats
     try:
         with open(goatconfigpath) as f:
             goatconfig=json.loads(f.read())
